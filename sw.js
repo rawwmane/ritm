@@ -1,11 +1,12 @@
 // Офлайн-кэш: сначала сеть (свежая версия), при ошибке или медленной сети — кэш.
-const CACHE = 'ritm-v1';
+const CACHE = 'ritm-v2';
 const ASSETS = [
   './',
   './index.html',
   './style.css',
   './app.js',
   './logic.js',
+  './dots.js',
   './seed.js',
   './manifest.webmanifest',
   './icons/icon-180.png',

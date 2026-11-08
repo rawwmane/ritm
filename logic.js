@@ -59,9 +59,22 @@ export function diffDays(a, b) {
 
 // ---------- состояние ----------
 
+// Версия стартового наполнения. Новые награды/карточки для уже установленных копий добавляются миграцией.
+export const SEED_V = 2;
+const MIGRATIONS = {
+  2: (s, seed) => addFromSeed(s.rewards, seed.rewards, ['r12', 'r13']),
+};
+function addFromSeed(list, seedList, ids) {
+  for (const id of ids) {
+    const item = seedList.find((x) => x.id === id);
+    if (item && !list.some((x) => x.id === id)) list.push({ ...item });
+  }
+}
+
 export function newState(today, seed) {
   return {
     v: 1,
+    seedV: SEED_V,
     start: today,
     xpTotal: 0,
     spent: 0,
@@ -93,6 +106,8 @@ export function hydrate(raw, today, seed) {
   for (const key of ['freezes', 'freezeAwards', 'counters', 'settings', 'rules']) {
     s[key] = { ...base[key], ...(raw[key] || {}) };
   }
+  for (let v = (raw.seedV || 1) + 1; v <= SEED_V; v++) MIGRATIONS[v]?.(s, seed);
+  s.seedV = SEED_V;
   return s;
 }
 
